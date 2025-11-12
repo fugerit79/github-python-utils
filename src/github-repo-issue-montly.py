@@ -25,6 +25,7 @@ headers = {
 }
 
 # Raccolta issue
+print(f"Raccogliendo issue da {owner}/{repo}...")
 issues = []
 while True:
     response = requests.get(url, headers=headers, params=params)
@@ -33,6 +34,9 @@ while True:
         break
     issues.extend([i for i in data if "pull_request" not in i])  # esclude PR
     params["page"] += 1
+    print(f"Pagina {params['page'] - 1} completata...")
+
+print(f"Totale issue trovate: {len(issues)}")
 
 # Estrazione date
 created_months = [
@@ -52,4 +56,13 @@ plt.title(f"Issue aperte per mese - {owner}/{repo}")
 plt.xlabel("Mese")
 plt.ylabel("Numero di issue")
 plt.tight_layout()
-plt.show()
+
+# Salva il grafico invece di mostrarlo
+output_file = f"{owner}_{repo}_issues.png"
+plt.savefig(output_file, dpi=300, bbox_inches='tight')
+print(f"\nGrafico salvato come: {output_file}")
+
+# Salva anche i dati in CSV
+csv_file = f"{owner}_{repo}_issues.csv"
+df.to_csv(csv_file, index=False)
+print(f"Dati salvati come: {csv_file}")
